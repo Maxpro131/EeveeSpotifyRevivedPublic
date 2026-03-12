@@ -70,7 +70,8 @@ class SPTAuthSessionHook: ClassHook<NSObject> {
         if SPTAuthSessionHook.allowLogout {
             orig.destroy()
         } else {
-            writeDebugLog("[AUTH] Blocked session destroy at \(elapsed)s")
+            let trace = Thread.callStackSymbols.prefix(15).joined(separator: "\n")
+            writeDebugLog("[AUTH] Blocked session destroy at \(elapsed)s\n[TRACE] \(trace)")
         }
     }
 
@@ -251,10 +252,15 @@ class ARTWebSocketTransportHook: ClassHook<NSObject> {
         if let msgString = message as? String {
             if let action = extractAblyAction(msgString) {
                 let actionName = ablyActionNames[action] ?? "unknown"
+                let elapsed = Int(Date().timeIntervalSince(tweakInitTime))
                 if blockedAblyActions.contains(action) {
-                    let elapsed = Int(Date().timeIntervalSince(tweakInitTime))
                     writeDebugLog("[ABLY] Blocked action \(action) (\(actionName)) at \(elapsed)s")
                     return
+                }
+                // Log action-15 (message) payloads — these may carry logout signals
+                if action == 15 {
+                    let preview = String(msgString.prefix(300))
+                    writeDebugLog("[ABLY] Message (action 15) at \(elapsed)s: \(preview)")
                 }
             }
         }
@@ -278,10 +284,15 @@ class ARTSRWebSocketHook: ClassHook<NSObject> {
            let text = String(data: data as Data, encoding: .utf8) {
             if let action = extractAblyAction(text) {
                 let actionName = ablyActionNames[action] ?? "unknown"
+                let elapsed = Int(Date().timeIntervalSince(tweakInitTime))
                 if blockedAblyActions.contains(action) {
-                    let elapsed = Int(Date().timeIntervalSince(tweakInitTime))
                     writeDebugLog("[ABLY-SR] Blocked frame action \(action) (\(actionName)) at \(elapsed)s")
                     return
+                }
+                // Log action-15 (message) payloads — these may carry logout signals
+                if action == 15 {
+                    let preview = String(text.prefix(300))
+                    writeDebugLog("[ABLY-SR] Message (action 15) at \(elapsed)s: \(preview)")
                 }
             }
         }

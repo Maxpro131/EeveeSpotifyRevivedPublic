@@ -56,8 +56,8 @@ ivinject-arm64 \
   -r Watch
 
 echo ""
-echo "Step 2/4: Applying ipapatch..."
-ipapatch -input "$BASE_IPA" -output "$PATCHED_IPA"
+echo "Step 2/4: Copying base IPA to patched output..."
+cp "$BASE_IPA" "$PATCHED_IPA"
 
 echo ""
 echo "Step 3/4: Stripping Watch bundle (if any remains)..."

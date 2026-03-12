@@ -76,6 +76,7 @@ func activatePremiumPatchingGroup() {
 
 struct EeveeSpotify: Tweak {
     static let version = "6.6.1"
+    static let buildNumber = "31"
     
     static var hookTarget: VersionHookTarget {
         let version = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String
@@ -104,7 +105,7 @@ struct EeveeSpotify: Tweak {
         let iosVersion = UIDevice.current.systemVersion
         let deviceModel = UIDevice.current.model
 
-        writeDebugLog("=== EeveeSpotify \(EeveeSpotify.version) starting ===")
+        writeDebugLog("=== EeveeSpotify \(EeveeSpotify.version) (build \(EeveeSpotify.buildNumber)) starting ===")
         writeDebugLog("[INIT] Spotify: \(spotifyVersion) (build \(spotifyBuild))")
         writeDebugLog("[INIT] iOS: \(iosVersion), Device: \(deviceModel)")
         writeDebugLog("[INIT] Hook target: \(EeveeSpotify.hookTarget)")
